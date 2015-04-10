@@ -1,22 +1,28 @@
 package budget
 
 import (
-	"time"
-	"testing"
 	"fmt"
+	"testing"
+	"time"
+    . "gopkg.in/check.v1"
 )
 
-func TestBudget(t *testing.T) {
+func Test(t *testing.T) { TestingT(t) }
+
+type MySuite struct{}
+
+var _ = Suite(&MySuite{})
+
+func (s *MySuite) TestStatementDate(c *C) {
 	loc, err := time.LoadLocation("America/New_York")
-	if (err!=nil) {
+	if err != nil {
 		fmt.Println(err)
 	}
 
 	time := time.Date(2015, time.April, 10, 0, 0, 0, 0, loc)
-	
+
 	statement := GetStatement(time)
 
-	if (statement.Date != time) {
-		t.Error("Expected date on statement is ",t, " but got ", statement.Date)
-	}
+	c.Assert(statement.date, Equals, time)		
 }
+

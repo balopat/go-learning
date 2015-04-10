@@ -5,10 +5,11 @@ import (
 )
 
 type statement struct {
-	Date time.Time
+	date time.Time
+	cash float64
 }
 
 func GetStatement(date time.Time) statement {
-	s := statement{date}
+	s := statement{date, 0}
 	return s
 }
