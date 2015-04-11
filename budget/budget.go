@@ -14,15 +14,21 @@ const (
 	HUF string = "HUF"
 )
 
-
 type statement struct {
-	date time.Time
+	date                time.Time
+	cash, savings, debt money
+}
+
+type inventory struct {
+	date                time.Time
 	cash, savings, debt money
 }
 
 func GetStatement(date time.Time) statement {
-	s := statement{date, money{0,USD}, money{0,USD}, money{0,USD}}
+	s := statement{date, money{0, USD}, money{0, USD}, money{0, USD}}
 	return s
 }
 
+func Inventory(inventory inventory) {
 
+}

@@ -2,9 +2,9 @@ package budget
 
 import (
 	"fmt"
+	. "gopkg.in/check.v1"
 	"testing"
 	"time"
-    . "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -16,28 +16,45 @@ var _ = Suite(&MySuite{})
 func (s *MySuite) TestEmptyBudget(c *C) {
 	time := dateFor(2015, time.April, 10)
 
-	statement := GetStatement(time)
-
-	assertStatementIsZeroAtDate(c, time, statement)
+	c.Assert(GetStatement(time), Equals,
+		statement{
+			date:    time,
+			cash:    money{0, USD},
+			savings: money{0, USD},
+			debt:    money{0, USD}})
 }
-
-
 
 func (s *MySuite) TestBudgetInventory(c *C) {
-	//inventoryDate := dateFor(2015, time.April, 10)
+	inventoryDate := dateFor(2015, time.April, 10)
 	afterInventoryDate := dateFor(2015, time.April, 12)
-	//beforeInventoryDate := dateFor(2015, time.April, 9)	
+	beforeInventoryDate := dateFor(2015, time.April, 9)
 
-	statement := GetStatement(afterInventoryDate)
-	
-	assertStatementIsZeroAtDate(c, afterInventoryDate, statement)
-}
+	Inventory(inventory{
+		date:    inventoryDate,
+		cash:    money{3.4, USD},
+		savings: money{1424224, USD},
+		debt:    money{100, USD}})
 
-func assertStatementIsZeroAtDate(c *C, date time.Time, statement statement) {
-	c.Assert(statement.date, Equals, date)		
-	c.Assert(statement.cash, Equals, money{0,USD})		
-	c.Assert(statement.savings, Equals, money{0,USD})		
-	c.Assert(statement.debt, Equals, money{0,USD})	
+	c.Assert(GetStatement(beforeInventoryDate), Equals,
+		statement{
+			date:    beforeInventoryDate,
+			cash:    money{0, USD},
+			savings: money{0, USD},
+			debt:    money{0, USD}})
+
+	c.Assert(GetStatement(inventoryDate), Equals,
+		statement{
+			date:    inventoryDate,
+			cash:    money{3.4, USD},
+			savings: money{1424224, USD},
+			debt:    money{100, USD}})
+
+	c.Assert(GetStatement(afterInventoryDate), Equals,
+		statement{
+			date:    inventoryDate,
+			cash:    money{3.4, USD},
+			savings: money{1424224, USD},
+			debt:    money{100, USD}})
 }
 
 func dateFor(year int, month time.Month, dayOfMonth int) time.Time {
