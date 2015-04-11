@@ -23,8 +23,9 @@ func (s *MySuite) TestStatementDate(c *C) {
 	statement := GetStatement(time)
 
 	c.Assert(statement.date, Equals, time)		
-	c.Assert(statement.cash, Equals, 0)		
-	c.Assert(statement.savings, Equals, 0)		
-	c.Assert(statement.debt, Equals, 0)		
+
+	c.Assert(statement.cash, Equals, 0.0)		
+	c.Assert(statement.savings, Equals, 0.0)		
+	c.Assert(statement.debt, Equals, 0.0)		
 }
 
