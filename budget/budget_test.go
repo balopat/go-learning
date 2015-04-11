@@ -13,7 +13,7 @@ type MySuite struct{}
 
 var _ = Suite(&MySuite{})
 
-func (s *MySuite) TestStatementDate(c *C) {
+func (s *MySuite) TestEmptyBudget(c *C) {
 	loc, err := time.LoadLocation("America/New_York")
 	if err != nil {
 		fmt.Println(err)
