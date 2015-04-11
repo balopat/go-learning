@@ -18,11 +18,26 @@ func (s *MySuite) TestEmptyBudget(c *C) {
 
 	statement := GetStatement(time)
 
-	c.Assert(statement.date, Equals, time)		
+	assertStatementIsZeroAtDate(c, time, statement)
+}
 
+
+
+func (s *MySuite) TestBudgetInventory(c *C) {
+	//inventoryDate := dateFor(2015, time.April, 10)
+	afterInventoryDate := dateFor(2015, time.April, 12)
+	//beforeInventoryDate := dateFor(2015, time.April, 9)	
+
+	statement := GetStatement(afterInventoryDate)
+	
+	assertStatementIsZeroAtDate(c, afterInventoryDate, statement)
+}
+
+func assertStatementIsZeroAtDate(c *C, date time.Time, statement statement) {
+	c.Assert(statement.date, Equals, date)		
 	c.Assert(statement.cash, Equals, money{0,USD})		
 	c.Assert(statement.savings, Equals, money{0,USD})		
-	c.Assert(statement.debt, Equals, money{0,USD})		
+	c.Assert(statement.debt, Equals, money{0,USD})	
 }
 
 func dateFor(year int, month time.Month, dayOfMonth int) time.Time {
