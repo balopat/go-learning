@@ -56,10 +56,45 @@ func (s *MySuite) TestBudgetInventory(c *C) {
 
 	c.Assert(GetStatement(afterInventoryDate), Equals,
 		statement{
-			date:    inventoryDate,
+			date:    afterInventoryDate,
 			cash:    money{3.4, USD},
 			savings: money{1424224, USD},
 			debt:    money{100, USD}})
+}
+
+func (s *MySuite) TestBudgetInventorySorting(c *C) {
+	inventoryDate := DateFor(2015, time.April, 8)
+	secondInventoryDate := DateFor(2015, time.April, 10)
+	betweenInventoriesDate := DateFor(2015, time.April, 9)
+	afterSecondInventoryDate := DateFor(2015, time.April,11)
+
+	Inventory(inventory{
+		date:    inventoryDate,
+		cash:    money{3.4, USD},
+		savings: money{1424224, USD},
+		debt:    money{100, USD}})
+
+
+	Inventory(inventory{
+		date:    secondInventoryDate,
+		cash:    money{1, USD},
+		savings: money{2, USD},
+		debt:    money{3, USD}})
+
+
+	c.Assert(GetStatement(betweenInventoriesDate), Equals,
+		statement{
+			date:    betweenInventoriesDate,
+			cash:    money{3.4, USD},
+			savings: money{1424224, USD},
+			debt:    money{100, USD}})
+
+	c.Assert(GetStatement(afterSecondInventoryDate), Equals,
+		statement{
+			date:    afterSecondInventoryDate,
+			cash:    money{1, USD},
+			savings: money{2, USD},
+			debt:    money{3, USD}})
 }
 
 

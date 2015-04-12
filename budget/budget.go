@@ -3,9 +3,8 @@ package budget
 import (
 	"time"
 	"fmt"
+	"sort"
 )
-
-
 
 type money struct {
 	notional float64
@@ -26,6 +25,17 @@ type inventory struct {
 	date                time.Time
 	cash, savings, debt money
 }
+type byInventoryDates []inventory
+
+func (s byInventoryDates) Len() int {
+    return len(s)
+}
+func (s byInventoryDates) Swap(i, j int) {
+    s[i], s[j] = s[j], s[i]
+}
+func (s byInventoryDates) Less(i, j int) bool {
+    return s[i].date.Before(s[j].date)
+}
 
 var inventories []inventory 
 
@@ -35,11 +45,15 @@ func ResetBudget() {
 
 func GetStatement(date time.Time) statement {
 	lastInventory := findInventoryInEffectFor(date)
-	return lastInventory.toStatement()
+	statement := lastInventory.toStatement()
+	statement.date = date
+	return statement
 }
 
 func Inventory(inventory inventory) {
 	inventories = append(inventories,inventory)
+	sort.Sort(byInventoryDates(inventories))
+
 }
 
 
@@ -50,16 +64,7 @@ func (i inventory) toStatement() statement {
 		i.savings,
 		i.debt}
 }
-
-
-func DateFor(year int, month time.Month, dayOfMonth int) time.Time {
-	loc, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		fmt.Println(err)
-	}
-	time := time.Date(year, month, dayOfMonth, 0, 0, 0, 0, loc)
-	return time
-}
+	
 
 func findInventoryInEffectFor(date time.Time) inventory {
 	prevInventory := zeroInventory(date)
@@ -81,4 +86,14 @@ func zeroInventory(date time.Time) inventory {
 		cash:    money{0, USD},
 		savings: money{0, USD},
 		debt:    money{0, USD}}
+}
+
+
+func DateFor(year int, month time.Month, dayOfMonth int) time.Time {
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Println(err)
+	}
+	time := time.Date(year, month, dayOfMonth, 0, 0, 0, 0, loc)
+	return time
 }
