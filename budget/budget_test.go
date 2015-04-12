@@ -1,7 +1,7 @@
 package budget
 
 import (
-	"fmt"
+	//"fmt"
 	. "gopkg.in/check.v1"
 	"testing"
 	"time"
@@ -11,10 +11,14 @@ func Test(t *testing.T) { TestingT(t) }
 
 type MySuite struct{}
 
+func (s *MySuite) SetUpTest(c *C) {
+    ResetBudget()
+}
+
 var _ = Suite(&MySuite{})
 
-func (s *MySuite) TestEmptyBudget(c *C) {
-	time := dateFor(2015, time.April, 10)
+func (s *MySuite) TestEmptyBudget(c *C) {	
+	time := DateFor(2015, time.April, 10)
 
 	c.Assert(GetStatement(time), Equals,
 		statement{
@@ -25,9 +29,9 @@ func (s *MySuite) TestEmptyBudget(c *C) {
 }
 
 func (s *MySuite) TestBudgetInventory(c *C) {
-	inventoryDate := dateFor(2015, time.April, 10)
-	afterInventoryDate := dateFor(2015, time.April, 12)
-	beforeInventoryDate := dateFor(2015, time.April, 9)
+	inventoryDate := DateFor(2015, time.April, 10)
+	afterInventoryDate := DateFor(2015, time.April, 12)
+	beforeInventoryDate := DateFor(2015, time.April, 9)
 
 	Inventory(inventory{
 		date:    inventoryDate,
@@ -35,6 +39,7 @@ func (s *MySuite) TestBudgetInventory(c *C) {
 		savings: money{1424224, USD},
 		debt:    money{100, USD}})
 
+	
 	c.Assert(GetStatement(beforeInventoryDate), Equals,
 		statement{
 			date:    beforeInventoryDate,
@@ -57,11 +62,4 @@ func (s *MySuite) TestBudgetInventory(c *C) {
 			debt:    money{100, USD}})
 }
 
-func dateFor(year int, month time.Month, dayOfMonth int) time.Time {
-	loc, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		fmt.Println(err)
-	}
-	time := time.Date(year, month, dayOfMonth, 0, 0, 0, 0, loc)
-	return time
-}
+
